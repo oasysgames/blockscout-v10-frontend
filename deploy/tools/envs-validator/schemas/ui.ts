@@ -173,6 +173,7 @@ export const navigationSchema = yup.object({
     NEXT_PUBLIC_NETWORK_LOGO_DARK: yup.string().test(urlTest),
     NEXT_PUBLIC_NETWORK_ICON: yup.string().test(urlTest),
     NEXT_PUBLIC_NETWORK_ICON_DARK: yup.string().test(urlTest),
+    NEXT_PUBLIC_SHOW_FEATURED_NETWORKS_BY_OLD_UI: yup.boolean(),
 });
 
 const footerLinkSchema: yup.ObjectSchema<CustomLink> = yup

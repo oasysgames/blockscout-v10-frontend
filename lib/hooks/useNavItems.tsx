@@ -154,7 +154,8 @@ export default function useNavItems(): ReturnType {
       rollupFeature.type === 'optimistic' ||
       rollupFeature.type === 'arbitrum' ||
       rollupFeature.type === 'zkEvm' ||
-      rollupFeature.type === 'scroll'
+      rollupFeature.type === 'scroll' ||
+      rollupFeature.type === 'oasys'
     )) {
       blockchainNavItems = [
         [
@@ -367,6 +368,16 @@ export default function useNavItems(): ReturnType {
         isActive: otherNavItems.flat().some(item => isInternalItem(item) && item.isActive),
         subItems: otherNavItems,
       },
+      config.verse.bridge.isVisible ? {
+        text: 'Bridge',
+        nextRoute: { pathname: '/bridge' as const },
+        isActive: pathname.startsWith('/bridge'),
+      } : null,
+      config.verse.experiment.isVisible ? {
+        text: 'Experiment',
+        nextRoute: { pathname: '/experiment' as const },
+        isActive: pathname.startsWith('/experiment'),
+      } : null,
     ].filter(Boolean);
 
     const accountNavItems: ReturnType['accountNavItems'] = [
