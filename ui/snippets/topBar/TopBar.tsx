@@ -39,7 +39,13 @@ const TopBar = () => {
 
   return (
     // not ideal if scrollbar is visible, but better than having a horizontal scroll
-    <Box bgColor={{ _light: 'theme.topbar.bg._light', _dark: 'theme.topbar.bg._dark' }} position="sticky" left={ 0 } width="100%" maxWidth="100vw">
+    <Box
+      bgColor={{ _light: 'theme.topbar.bg._light', _dark: 'theme.topbar.bg._dark' }}
+      position="sticky"
+      left={ 0 }
+      width="100%"
+      maxWidth="100vw"
+    >
       <Flex
         py={ 2 }
         px={{ base: 3, lg: 6 }}
@@ -49,7 +55,9 @@ const TopBar = () => {
         maxW={ `${ CONTENT_MAX_WIDTH }px` }
       >
         <HStack gap={ 0 } fontSize="xs">
-          { Boolean(config.UI.featuredNetworks.items || config.features.multichain.isEnabled) && !config.UI.navigation.showFeaturedNetworksByOldUiFlg && <NetworkMenu/> }
+          { Boolean(config.UI.featuredNetworks.items || config.features.multichain.isEnabled) &&
+            !config.UI.navigation.showFeaturedNetworksByOldUiFlg &&
+            <NetworkMenu/> }
           { !config.features.multichain.isEnabled ? <TopBarStats/> : <div/> }
         </HStack>
         <HStack

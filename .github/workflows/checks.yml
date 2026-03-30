@@ -53,8 +53,8 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit == 'true'
         run: yarn chakra:typegen
 
-#       - name: Run ESLint
-#         run: yarn lint:eslint
+      - name: Run ESLint
+        run: yarn lint:eslint
 
       - name: Compile TypeScript
         run: yarn lint:tsc

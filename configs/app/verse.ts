@@ -43,7 +43,6 @@ class TokenListManager {
       // Fetch the JSON file from the public directory
       const response = await fetch(tokenFilePath);
       if (!response.ok) {
-        console.log(`Failed to fetch external token list (${ response.status }), using default token list`);
         return;
       }
 
@@ -52,14 +51,9 @@ class TokenListManager {
       // Validate the data structure
       if (this.isValidTokenList(data)) {
         this.tokenList = data;
-        console.log('Token list loaded successfully from external source');
-      } else {
-        console.error('Invalid token list format from external source');
-        console.log('Using default token list as fallback');
       }
     } catch (error) {
-      console.error('Error loading token list from external source:', error);
-      console.log('Using default token list as fallback');
+      void error;
     }
   }
 

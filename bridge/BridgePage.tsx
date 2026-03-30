@@ -1,11 +1,13 @@
+import { Box, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa';
 import { useSwitchChain } from 'wagmi';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { useColorModeValue } from 'toolkit/chakra/color-mode';
 
 import { ChainId, TokenIndex } from './constants/types';
+
+import config from 'configs/app';
+import { useColorModeValue } from 'toolkit/chakra/color-mode';
 
 import { CHAINS, getTokenList, getVerseVersion } from './constants/chains';
 import { getTokenInfo } from './constants/tokens';
@@ -15,7 +17,6 @@ import { useDepositWithdraw } from './hooks/useDepositWithdraw';
 import { LoadingIcon, LoadingModal } from './LoadingModal';
 import type { SelectListItem } from './SelectModal';
 import { SelectModal } from './SelectModal';
-import config from 'configs/app';
 
 // Get l1ChainId, l2ChainId from .env
 const l1ChainId = config.chain.isTestnet ? ChainId.OASYS_TESTNET : ChainId.OASYS;
@@ -31,6 +32,7 @@ const BridgePage = () => {
   const [ tokenIndex, setTokenIndex ] = useState(TokenIndex.OAS);
   const [ isDeposit, setIsDeposit ] = useState(true);
   const [ value, setValue ] = useState('');
+  const [ isSelectTokenOpen, setIsSelectTokenOpen ] = useState(false);
 
   const tokenInfoItems: Array<SelectListItem> = useMemo(
     () =>
@@ -41,16 +43,17 @@ const BridgePage = () => {
     [ isDeposit ],
   );
 
-  const handleSwap = () => {
+  const handleSwap = useCallback(() => {
     setIsDeposit((val) => !val);
-  };
+  }, []);
 
   // switch chain when switch between deposit/withdraw
   const { switchChainAsync } = useSwitchChain();
   useEffect(() => {
-    const chainId = isDeposit ? l1ChainId : l2ChainId
-    switchChainAsync({ chainId })
-  }, [isDeposit])
+    const chainId = isDeposit ? l1ChainId : l2ChainId;
+
+    void switchChainAsync({ chainId });
+  }, [ isDeposit, switchChainAsync ]);
 
   const [ deposit, withdraw, loading, hash, error ] = useDepositWithdraw(verseVersion ? 1 : 0, isDeposit ? l1ChainId : l2ChainId);
 
@@ -108,200 +111,215 @@ const BridgePage = () => {
 
   // token info
   const tokenInfo = getTokenInfo(tokenIndex);
-
-  const [ isSelectTokenOpen, setIsSelectTokenOpen ] = useState(false);
-
-  const bgColor = useColorModeValue('gray.100', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const formBg = useColorModeValue('white', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.200');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const arrowColor = useColorModeValue('#1A202C', '#FFFFFF');
+  const moveIconFilter = useColorModeValue('invert(0) brightness(0)', 'invert(1) brightness(1)');
+  const tokenHoverBg = useColorModeValue('gray.50', 'gray.700');
+  const amountBg = useColorModeValue('white', 'gray.800');
+  const maxButtonBg = useColorModeValue('gray.100', 'gray.700');
+  const maxButtonHoverBg = useColorModeValue('gray.200', 'gray.600');
+
+  const openSelectToken = useCallback(() => {
+    setIsSelectTokenOpen(true);
+  }, []);
+
+  const closeSelectToken = useCallback(() => {
+    setIsSelectTokenOpen(false);
+  }, []);
+
+  const handleTokenSelect = useCallback((id: number) => {
+    setTokenIndex(id);
+  }, []);
+
+  const handleValueChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  }, []);
 
   return (
     <Flex direction="column" justify="center" align="center" className="bridge-box">
       <Box
-        p={6}
+        p={ 6 }
         rounded="lg"
         shadow="md"
         w="full"
         maxW="md"
-        mt={12}
-        mb={6}
-        bg={formBg}
+        mt={ 12 }
+        mb={ 6 }
+        bg={ formBg }
       >
-        <Text fontSize="xl" fontWeight="semibold" mb={4} color={textColor}>Bridge Route</Text>
+        <Text fontSize="xl" fontWeight="semibold" mb={ 4 } color={ textColor }>Bridge Route</Text>
 
-        <Flex
-          direction={isDeposit ? 'column' : 'column-reverse'}
-        >
-          <Box mb={4}>
-            <Flex align="center" justify="space-between" mb={2}>
-              <Text fontSize="sm" color={textColor}>
-                <Text as="span" fontWeight="medium">{isDeposit ? 'From' : 'To'} </Text>
+        <Flex direction={ isDeposit ? 'column' : 'column-reverse' }>
+          <Box mb={ 4 }>
+            <Flex align="center" justify="space-between" mb={ 2 }>
+              <Text fontSize="sm" color={ textColor }>
+                <Text as="span" fontWeight="medium">{ isDeposit ? 'From' : 'To' } </Text>
                 <Text as="span" fontWeight="normal">Hub Layer</Text>
               </Text>
-              <Text color={textColor}>
-                {l1Balance} {tokenInfo.symbol}
+              <Text color={ textColor }>
+                { l1Balance } { tokenInfo.symbol }
               </Text>
             </Flex>
-            <Flex align="center" p={3} borderWidth="1px" borderColor={borderColor} rounded="lg" bg={cardBg}>
+            <Flex align="center" p={ 3 } borderWidth="1px" borderColor={ borderColor } rounded="lg" bg={ cardBg }>
               <Image
                 src="/images/oasys_icon.png"
-                alt={CHAINS[l1ChainId].name}
-                width={24}
-                height={24}
+                alt={ CHAINS[l1ChainId].name }
+                width={ 24 }
+                height={ 24 }
                 className="mr-2"
               />
-              <Text ml={2} fontWeight="medium" w="full" color={textColor}>
-                {CHAINS[l1ChainId].name}
+              <Text ml={ 2 } fontWeight="medium" w="full" color={ textColor }>
+                { CHAINS[l1ChainId].name }
               </Text>
             </Flex>
           </Box>
-          <Box mb={4} textAlign="center">
-            <button onClick={handleSwap} className="focus:outline-none">
+          <Box mb={ 4 } textAlign="center">
+            <button onClick={ handleSwap } className="focus:outline-none">
               <Image
                 src="/images/move.svg"
                 alt="move"
-                width={24}
-                height={24}
+                width={ 24 }
+                height={ 24 }
                 className="rotate-90"
-                style={{ 
-                  filter: useColorModeValue(
-                    'invert(0) brightness(0)', // ライトモード: 黒
-                    'invert(1) brightness(1)' // ダークモード: 白
-                  )
-                }}
+                style={{ filter: moveIconFilter }}
               />
             </button>
           </Box>
-          <Box mb={4}>
-            <Flex align="center" justify="space-between" mb={2}>
-              <Text fontSize="sm" color={textColor}>
-                <Text as="span" fontWeight="medium">{isDeposit ? 'To' : 'From'} </Text>
+          <Box mb={ 4 }>
+            <Flex align="center" justify="space-between" mb={ 2 }>
+              <Text fontSize="sm" color={ textColor }>
+                <Text as="span" fontWeight="medium">{ isDeposit ? 'To' : 'From' } </Text>
                 <Text as="span" fontWeight="normal">Verse</Text>
               </Text>
-              <Text color={textColor}>
-                {l2Balance} {tokenInfo.symbol}
+              <Text color={ textColor }>
+                { l2Balance } { tokenInfo.symbol }
               </Text>
             </Flex>
-            <Flex align="center" p={3} borderWidth="1px" borderColor={borderColor} rounded="lg" bg={cardBg}>
+            <Flex align="center" p={ 3 } borderWidth="1px" borderColor={ borderColor } rounded="lg" bg={ cardBg }>
               <Image
-                src={l2ChainImageUrl}
+                src={ l2ChainImageUrl }
                 alt="Verse image"
-                width={24}
-                height={24}
+                width={ 24 }
+                height={ 24 }
                 className="mr-2"
               />
-              <Text ml={2} fontWeight="medium" w="full" color={textColor}>
-                {CHAINS[l2ChainId].name}
+              <Text ml={ 2 } fontWeight="medium" w="full" color={ textColor }>
+                { CHAINS[l2ChainId].name }
               </Text>
             </Flex>
           </Box>
         </Flex>
-        <Box mb={4}>
-          <Text fontSize="md" fontWeight="medium" mb={2} color={textColor}>Asset</Text>
-          <Flex align="center" p={3} borderWidth="1px" borderColor={borderColor} rounded="lg" bg={cardBg}>
-            <Text fontSize="md" fontWeight="medium" color={textColor}>Send Token (ERC-20)</Text>
+        <Box mb={ 4 }>
+          <Text fontSize="md" fontWeight="medium" mb={ 2 } color={ textColor }>Asset</Text>
+          <Flex align="center" p={ 3 } borderWidth="1px" borderColor={ borderColor } rounded="lg" bg={ cardBg }>
+            <Text fontSize="md" fontWeight="medium" color={ textColor }>Send Token (ERC-20)</Text>
           </Flex>
-          <Box mt={4}>
-            <Flex align="center" justify="space-between" mb={2}>
-              <Text fontSize="sm" color={textColor}>
+          <Box mt={ 4 }>
+            <Flex align="center" justify="space-between" mb={ 2 }>
+              <Text fontSize="sm" color={ textColor }>
                 <Text as="span" fontWeight="medium">Token</Text>
               </Text>
-              <Text color={textColor}>
-                {tokenInfo.symbol}
+              <Text color={ textColor }>
+                { tokenInfo.symbol }
               </Text>
             </Flex>
             <Box
               as="button"
-              onClick={() => setIsSelectTokenOpen(true)}
+              onClick={ openSelectToken }
               w="full"
               cursor="pointer"
             >
-              <Flex 
-                align="center" 
-                p={3} 
-                borderWidth="1px" 
-                borderColor={borderColor} 
-                rounded="lg" 
-                bg={cardBg}
-                _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
+              <Flex
+                align="center"
+                p={ 3 }
+                borderWidth="1px"
+                borderColor={ borderColor }
+                rounded="lg"
+                bg={ cardBg }
+                _hover={{ bg: tokenHoverBg }}
               >
                 <Image
-                  src={tokenInfo.icon || ''}
-                  alt={tokenInfo.symbol}
-                  width={24}
-                  height={24}
+                  src={ tokenInfo.icon || '' }
+                  alt={ tokenInfo.symbol }
+                  width={ 24 }
+                  height={ 24 }
                   className="mr-2"
                 />
-                <Text ml={2} fontWeight="medium" flex="1" textAlign="left" color={textColor}>
-                  {tokenInfo.symbol}
+                <Text ml={ 2 } fontWeight="medium" flex="1" textAlign="left" color={ textColor }>
+                  { tokenInfo.symbol }
                 </Text>
                 <FaAngleDown style={{ color: arrowColor }}/>
               </Flex>
             </Box>
-            <Box mt={2} position="relative">
-              <Flex align="center" justify="space-between" mb={2}>
-                <Text fontSize="sm" color={textColor}>
+            <Box mt={ 2 } position="relative">
+              <Flex align="center" justify="space-between" mb={ 2 }>
+                <Text fontSize="sm" color={ textColor }>
                   <Text as="span" fontWeight="medium">Amount</Text>
                 </Text>
               </Flex>
-              <Flex 
-                align="center" 
-                p={3} 
-                borderWidth="1px" 
-                borderColor={borderColor} 
-                rounded="lg" 
-                bg={useColorModeValue('white', 'gray.800')}
+              <Flex
+                align="center"
+                p={ 3 }
+                borderWidth="1px"
+                borderColor={ borderColor }
+                rounded="lg"
+                bg={ amountBg }
                 position="relative"
               >
                 <input
-                  value={value}
+                  value={ value }
                   type="text"
                   placeholder="0.0"
                   className="w-full pr-16 font-medium focus:outline-none"
                   style={{ backgroundColor: 'transparent', color: textColor }}
-                  onChange={(e) => setValue(e.target.value)}
+                  onChange={ handleValueChange }
                 />
                 <Box
                   as="button"
                   position="absolute"
-                  right={3}
-                  px={3}
-                  py={1}
-                  bg={useColorModeValue('gray.100', 'gray.700')}
-                  color={textColor}
+                  right={ 3 }
+                  px={ 3 }
+                  py={ 1 }
+                  bg={ maxButtonBg }
+                  color={ textColor }
                   borderWidth="1px"
-                  borderColor={borderColor}
+                  borderColor={ borderColor }
                   rounded="lg"
-                  _hover={{ bg: useColorModeValue('gray.200', 'gray.600') }}
-                  onClick={setMax}
+                  _hover={{ bg: maxButtonHoverBg }}
+                  onClick={ setMax }
                 >
                   max
                 </Box>
               </Flex>
             </Box>
           </Box>
-          {isSelectTokenOpen && (
+          { isSelectTokenOpen && (
             <SelectModal
               headerText="Select Token"
-              items={tokenInfoItems}
-              onClose={() => setIsSelectTokenOpen(false)}
-              onSelect={(id) => setTokenIndex(id)}
+              items={ tokenInfoItems }
+              onClose={ closeSelectToken }
+              onSelect={ handleTokenSelect }
             />
-          )}
+          ) }
         </Box>
         <button
           className="w-full bg-sky-700 text-white font-medium rounded-lg py-2 disabled:opacity-50"
-          onClick={doBridge}
-          disabled={loading || !valid}
+          onClick={ doBridge }
+          disabled={ loading || !valid }
         >
-          {loading ? <LoadingIcon/> : ''} Bridge
+          { loading ? <LoadingIcon/> : '' } Bridge
         </button>
       </Box>
 
-      <LoadingModal loading={loading} error={error} hash={hash} chainId={isDeposit ? l1ChainId : l2ChainId}/>
+      <LoadingModal
+        loading={ loading }
+        error={ error }
+        hash={ hash }
+        chainId={ isDeposit ? l1ChainId : l2ChainId }
+      />
     </Flex>
   );
 };

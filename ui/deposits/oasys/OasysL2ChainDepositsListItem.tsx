@@ -4,17 +4,16 @@ import type { AddressWithdrawalsItem } from 'types/api/address';
 import type { BlockWithdrawalsItem } from 'types/api/block';
 import type { WithdrawalsItem } from 'types/api/withdrawals';
 
-import ListItemMobileGrid from 'ui/shared/ListItemMobile/ListItemMobileGrid';
-import TimeWithTooltip from 'ui/shared/time/TimeWithTooltip';
-
 import config from 'configs/app';
 import { currencyUnits } from 'lib/units';
-import CurrencyValue from 'ui/shared/CurrencyValue';
 import { Skeleton } from 'toolkit/chakra/skeleton';
-import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
-import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
-import AddressEntityL1 from 'ui/shared/entities/address/AddressEntityL1';
+import CurrencyValue from 'ui/shared/CurrencyValue';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
+import AddressEntityL1 from 'ui/shared/entities/address/AddressEntityL1';
+import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
+import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
+import ListItemMobileGrid from 'ui/shared/ListItemMobile/ListItemMobileGrid';
+import TimeWithTooltip from 'ui/shared/time/TimeWithTooltip';
 
 const feature = config.features.beaconChain;
 
@@ -38,31 +37,16 @@ type Props = {
   item: ExtendedDepositsItem | ExtendedAddressDepositsItem | ExtendedBlockDepositsItem;
   view: 'list' | 'address' | 'block';
   isLoading?: boolean;
-}
-
-// Helper function to truncate long strings
-const truncateMiddle = (str: string, startChars = 6, endChars = 4, separator = '...') => {
-  if (str.length <= startChars + endChars) {
-    return str;
-  }
-  
-  const start = str.substring(0, startChars);
-  const end = str.substring(str.length - endChars);
-  
-  return `${start}${separator}${end}`;
 };
 
 // Type guards
-const hasBlockNumber = (item: any): item is { block_number: number } => 
+const hasBlockNumber = (item: object): item is { block_number: number } =>
   'block_number' in item;
 
-const hasReceiver = (item: any): item is { receiver: any } => 
+const hasReceiver = (item: object): item is { receiver: ExtendedDepositsItem['receiver'] } =>
   'receiver' in item;
 
-const hasTxHash = (item: any): item is { tx_hash: string } => 
-  'tx_hash' in item;
-
-const hasTimestamp = (item: any): item is { timestamp: string } => 
+const hasTimestamp = (item: object): item is { timestamp: string } =>
   'timestamp' in item;
 
 // Helper function to convert timestamp from seconds to milliseconds if needed
@@ -119,7 +103,7 @@ const OasysL2ChainDepositsListItem = ({ item, view, isLoading }: Props) => {
               <Skeleton loading={ !isLoading } display="inline-block" fontWeight={ 600 }>
                 -
               </Skeleton>
-            )}
+            ) }
           </ListItemMobileGrid.Value>
         </>
       ) }

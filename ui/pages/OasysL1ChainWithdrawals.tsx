@@ -5,15 +5,16 @@ import React, { useState, useCallback } from 'react';
 import config from 'configs/app';
 import getCurrencyValue from 'lib/getCurrencyValue';
 import { currencyUnits } from 'lib/units';
-import { ACTION_BAR_HEIGHT_DESKTOP } from 'ui/shared/ActionBar';
 import { Skeleton } from 'toolkit/chakra/skeleton';
+import { useBridgeEventCounts } from 'ui/experiment/services/useBridgeEventCounts';
+import type { EventType } from 'ui/experiment/services/useBridgeEvents';
+import { useBridgeEvents } from 'ui/experiment/services/useBridgeEvents';
+import { ACTION_BAR_HEIGHT_DESKTOP } from 'ui/shared/ActionBar';
 import DataListDisplay from 'ui/shared/DataListDisplay';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import StickyPaginationWithText from 'ui/shared/StickyPaginationWithText';
 import OasysL1ChainWithdrawalsListItem from 'ui/withdrawals/oasysL1/OasysL1ChainWithdrawalsListItem';
 import OasysL1ChainWithdrawalsTable from 'ui/withdrawals/oasysL1/OasysL1ChainWithdrawalsTable';
-import { useBridgeEvents, EventType } from 'ui/experiment/services/useBridgeEvents';
-import { useBridgeEventCounts } from 'ui/experiment/services/useBridgeEventCounts';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -31,7 +32,7 @@ interface ExtendedWithdrawalsItem {
     ens_domain_name: null;
     private_tags: null;
     public_tags: null;
-    watchlist_names: any[];
+    watchlist_names: Array<unknown>;
   };
   amount: string;
   block_number: number;
@@ -42,18 +43,10 @@ interface ExtendedWithdrawalsItem {
   chainName?: string;
 }
 
-// Define the props for the list item component
-type ListItemProps = {
-  item: ExtendedWithdrawalsItem;
-  view: 'list' | 'address' | 'block';
-  isLoading?: boolean;
-  key?: string; // Add key property
-};
-
 const Withdrawals = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [eventType, setEventType] = useState<EventType>('DEPOSIT');
-  const [chainName, setChainName] = useState<string | null>(null);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const eventType: EventType = 'DEPOSIT';
+  const chainName: string | null = null;
 
   // Fetch bridge event data
   const { data, isLoading, isError, pagination } = useBridgeEvents({
@@ -85,7 +78,7 @@ const Withdrawals = () => {
   }, []);
 
   // Transform bridge event data into a format compatible with the components
-  const transformedItems = data.map((event, idx) => {
+  const transformedItems = data.map((event) => {
     return {
       // Use blockNumber as index (must be a number)
       index: parseInt(event.blockNumber) || 0,
@@ -116,25 +109,25 @@ const Withdrawals = () => {
   // Content to display based on the screen size
   const content = transformedItems.length > 0 ? (
     <>
-      {/* Render the list view for small screens */}
+      { /* Render the list view for small screens */ }
       <Box display={{ base: 'block', lg: 'none' }}>
-        {transformedItems.map((item, index) => (
+        { transformedItems.map((item, index) => (
           <OasysL1ChainWithdrawalsListItem
-            key={item.block_number + String(index)}
-            item={item}
+            key={ item.block_number + String(index) }
+            item={ item }
             view="list"
-            isLoading={isLoading}
+            isLoading={ isLoading }
           />
-        ))}
+        )) }
       </Box>
 
-      {/* Render the table view for large screens */}
+      { /* Render the table view for large screens */ }
       <Box display={{ base: 'none', lg: 'block' }}>
         <OasysL1ChainWithdrawalsTable
-          items={transformedItems}
+          items={ transformedItems }
           view="list"
-          top={pagination.hasNextPage || pagination.hasPreviousPage ? ACTION_BAR_HEIGHT_DESKTOP : 0}
-          isLoading={isLoading}
+          top={ pagination.hasNextPage || pagination.hasPreviousPage ? ACTION_BAR_HEIGHT_DESKTOP : 0 }
+          isLoading={ isLoading }
         />
       </Box>
     </>
@@ -143,13 +136,13 @@ const Withdrawals = () => {
   // Summary text with withdrawal count and total value
   const text = (() => {
     return (
-      <Skeleton loading={ countersQuery.isPlaceholderData || isLoading} display="flex" flexWrap="wrap">
-        {countersQuery.data && (
+      <Skeleton loading={ countersQuery.isPlaceholderData || isLoading } display="flex" flexWrap="wrap">
+        { countersQuery.data && (
           <Text lineHeight={{ base: '24px', lg: '32px' }}>
-            {BigNumber(countersQuery.data.withdrawal_count).toFormat()} withdrawals have been processed
-            and {getCurrencyValue({ value: countersQuery.data.withdrawal_sum }).valueStr} {currencyUnits.ether} has been withdrawn
+            { BigNumber(countersQuery.data.withdrawal_count).toFormat() } withdrawals have been processed
+            and { getCurrencyValue({ value: countersQuery.data.withdrawal_sum }).valueStr } { currencyUnits.ether } has been withdrawn
           </Text>
-        )}
+        ) }
       </Skeleton>
     );
   })();
@@ -169,16 +162,16 @@ const Withdrawals = () => {
     isLoading: isLoading,
   };
 
-  const actionBar = <StickyPaginationWithText text={text} pagination={paginationControl} />;
+  const actionBar = <StickyPaginationWithText text={ text } pagination={ paginationControl }/>;
 
   return (
     <>
-      {/* Page title */}
+      { /* Page title */ }
       <PageTitle
-        title={config.meta.seo.enhancedDataEnabled ? `${config.chain.name} withdrawals` : 'Withdrawals'}
+        title={ config.meta.seo.enhancedDataEnabled ? `${ config.chain.name } withdrawals` : 'Withdrawals' }
         withTextAd
       />
-      {/* Main content display */}
+      { /* Main content display */ }
       <DataListDisplay
         isError={ isError }
         itemsNum={ transformedItems.length }

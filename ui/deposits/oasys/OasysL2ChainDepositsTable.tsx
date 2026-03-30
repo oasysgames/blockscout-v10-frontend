@@ -6,8 +6,8 @@ import type { WithdrawalsItem } from 'types/api/withdrawals';
 
 import config from 'configs/app';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
-
 import { TableBody, TableColumnHeader, TableHeaderSticky, TableRoot, TableRow } from 'toolkit/chakra/table';
+
 import OasysL2ChainDepositsTableItem from './OasysL2ChainDepositsTableItem';
 
 const feature = config.features.beaconChain;
@@ -52,51 +52,51 @@ const OasysL2ChainDepositsTable = ({ items, isLoading, top, view }: Props) => {
 
   return (
     <TableRoot tableLayout="auto" minW="950px">
-      <TableHeaderSticky top={top}>
+      <TableHeaderSticky top={ top }>
         <TableRow>
           <TableColumnHeader minW="100px">L1 block No</TableColumnHeader>
           <TableColumnHeader minW="140px">L1 Txn hash</TableColumnHeader>
-          {view !== 'address' && <TableColumnHeader w="25%">L1 txn origin</TableColumnHeader>}
-          {view !== 'address' && <TableColumnHeader w="25%">To</TableColumnHeader>}
-          {view !== 'block' && <TableColumnHeader w="25%">Age</TableColumnHeader>}
-          <TableColumnHeader w="25%">{`Value ${feature.currency.symbol}`}</TableColumnHeader>
+          { view !== 'address' && <TableColumnHeader w="25%">L1 txn origin</TableColumnHeader> }
+          { view !== 'address' && <TableColumnHeader w="25%">To</TableColumnHeader> }
+          { view !== 'block' && <TableColumnHeader w="25%">Age</TableColumnHeader> }
+          <TableColumnHeader w="25%">{ `Value ${ feature.currency.symbol }` }</TableColumnHeader>
         </TableRow>
       </TableHeaderSticky>
       <TableBody>
-        {view === 'list' &&
+        { view === 'list' &&
           (items as Array<ExtendedDepositsItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
-                key={item.index + (isLoading ? String(index) : '')}
-                item={item}
+                key={ item.index + (isLoading ? String(index) : '') }
+                item={ item }
                 view="list"
-                isLoading={isLoading}
+                isLoading={ isLoading }
               />
-            ))}
-        {view === 'address' &&
+            )) }
+        { view === 'address' &&
           (items as Array<ExtendedAddressDepositsItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
-                key={item.index + (isLoading ? String(index) : '')}
-                item={item}
+                key={ item.index + (isLoading ? String(index) : '') }
+                item={ item }
                 view="address"
-                isLoading={isLoading}
+                isLoading={ isLoading }
               />
-            ))}
-        {view === 'block' &&
+            )) }
+        { view === 'block' &&
           (items as Array<ExtendedBlockDepositsItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
-                key={item.index + (isLoading ? String(index) : '')}
-                item={item}
+                key={ item.index + (isLoading ? String(index) : '') }
+                item={ item }
                 view="block"
-                isLoading={isLoading}
+                isLoading={ isLoading }
               />
-            ))}
-        <TableRow ref={cutRef} />
+            )) }
+        <TableRow ref={ cutRef }/>
       </TableBody>
     </TableRoot>
   );

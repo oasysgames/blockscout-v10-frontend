@@ -2,15 +2,16 @@ import type { Address } from 'viem';
 import type { Chain } from 'viem/chains';
 
 import { ChainId, TokenIndex } from '../types';
+
 import { DefiVerse } from './defi';
 import { GeekVerse } from './geek';
 import { GesoVerse } from './geso';
 import { HOMEVerse } from './home';
 import { MCHVerse } from './mch';
 import { Oasys } from './oasys';
+import { OasysTestnet } from './oasystestnet';
 import { SaakuruVerse } from './saakuru';
 import { SandVerse } from './sand';
-import { OasysTestnet } from './oasystestnet';
 import { TCGVerse } from './tcg';
 import { XPLAVerse } from './xpla';
 import { YooldoVerse } from './yooldo';
@@ -100,9 +101,9 @@ export function getTokenList(
 }
 
 interface ChainWithVerseVersion {
-  verseVersion?: 0 | 1
+  verseVersion?: 0 | 1;
 }
 
 export function getVerseVersion(chainId: ChainId) {
-  return (getChainInfo(chainId) as ChainWithVerseVersion).verseVersion
+  return (getChainInfo(chainId) as ChainWithVerseVersion).verseVersion;
 }

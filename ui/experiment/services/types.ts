@@ -13,7 +13,7 @@ export interface DailyBridgeStat {
 }
 
 export interface BridgeStatsResponse {
-  dailyBridgeStats: DailyBridgeStat[];
+  dailyBridgeStats: Array<DailyBridgeStat>;
 }
 
 export const DAILY_STATS_QUERY = gql`
@@ -44,7 +44,7 @@ export const DAILY_STATS_QUERY = gql`
       blockTime
     }
   }
-`; 
+`;
 
 export interface BridgeEvent {
   amount: number;
@@ -59,7 +59,7 @@ export interface BridgeEvent {
 }
 
 export interface BridgeEventsResponse {
-  bridgeEvents: BridgeEvent[];
+  bridgeEvents: Array<BridgeEvent>;
 }
 
 export const BRIDGE_EVENTS_QUERY = gql`

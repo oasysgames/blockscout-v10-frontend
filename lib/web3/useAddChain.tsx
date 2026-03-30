@@ -1,6 +1,6 @@
+import { get } from 'es-toolkit/compat';
 import React from 'react';
 import type { AddEthereumChainParameter } from 'viem';
-import { get } from 'es-toolkit/compat';
 
 import config from 'configs/app';
 import { useMultichainContext } from 'lib/contexts/multichain';

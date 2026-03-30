@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 
-import type { LineChartInfo, LineChartSection } from '@blockscout/stats-types';
 import type { DailyBridgeStat } from './services/types';
 
 import { useBridgeStats } from './services/useBridgeStats';
@@ -28,19 +27,6 @@ interface ChartDataPoint {
   value: number;
 }
 
-interface ChainChartData {
-  chainName: string;
-  data: ChartDataPoint[];
-}
-
-function isSectionMatches(section: LineChartSection, currentSection: string): boolean {
-  return currentSection === 'all' || section.id === currentSection;
-}
-
-function isChartNameMatches(q: string, chart: LineChartInfo) {
-  return chart.title.toLowerCase().includes(q.toLowerCase());
-}
-
 // Wei単位をETHへ変換
 function formatAmount(weiString: string): number {
   const weiNum = Number(weiString);
@@ -53,24 +39,24 @@ export const useExperiment = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1; // 現在の月を取得（1-12）
-  
+
   // 今月の最終日を取得
   const lastDayOfMonth = new Date(year, month, 0);
-  
-  // YYYY-MM-DD形式の文字列を作成
-  const firstDayStr = `${year}-${month.toString().padStart(2, '0')}-01`;
-  const lastDayStr = `${year}-${month.toString().padStart(2, '0')}-${lastDayOfMonth.getDate().toString().padStart(2, '0')}`;
 
-  const [startDate, setStartDate] = useState(firstDayStr);
-  const [endDate, setEndDate] = useState(lastDayStr);
-  const [chainFilter, setChainFilter] = useState('all');
-  const [eventTypeFilter, setEventTypeFilter] = useState('all');
+  // YYYY-MM-DD形式の文字列を作成
+  const firstDayStr = `${ year }-${ month.toString().padStart(2, '0') }-01`;
+  const lastDayStr = `${ year }-${ month.toString().padStart(2, '0') }-${ lastDayOfMonth.getDate().toString().padStart(2, '0') }`;
+
+  const [ startDate, setStartDate ] = useState(firstDayStr);
+  const [ endDate, setEndDate ] = useState(lastDayStr);
+  const [ chainFilter, setChainFilter ] = useState('all');
+  const [ eventTypeFilter, setEventTypeFilter ] = useState('all');
 
   // コンポーネントマウント時に初期値を設定
   useEffect(() => {
     if (!startDate) setStartDate(firstDayStr);
     if (!endDate) setEndDate(lastDayStr);
-  }, []);
+  }, [ endDate, firstDayStr, lastDayStr, startDate ]);
 
   // Bridge stats data
   const { data, isLoading, error } = useBridgeStats({
@@ -83,14 +69,14 @@ export const useExperiment = () => {
   // Computed values
 
   const uniqueChains = useMemo(() => {
-    const chains = new Set(['all', ...(data?.map(item => item.chainName) || [])]);
+    const chains = new Set([ 'all', ...(data?.map(item => item.chainName) || []) ]);
     return Array.from(chains);
-  }, [data]);
+  }, [ data ]);
 
   const uniqueEventTypes = useMemo(() => {
-    const types = new Set(['all', ...(data?.map(item => item.eventType) || [])]);
+    const types = new Set([ 'all', ...(data?.map(item => item.eventType) || []) ]);
     return Array.from(types);
-  }, [data]);
+  }, [ data ]);
 
   // Verse別の統計データを計算
   const verseStats = useMemo(() => {
@@ -126,7 +112,7 @@ export const useExperiment = () => {
     });
 
     return Array.from(verseMap.values());
-  }, [data]);
+  }, [ data ]);
 
   const handleStartDateChange = useCallback((date: string) => {
     setStartDate(date);
@@ -149,29 +135,29 @@ export const useExperiment = () => {
     if (!data) return [];
 
     // 日付とチェーンでグループ化
-    const groupedData = new Map<string, Map<string, DailyBridgeStat[]>>();
-    
+    const groupedData = new Map<string, Map<string, Array<DailyBridgeStat>>>();
+
     data.forEach(item => {
       const dateKey = item.date;
       const chainKey = item.chainName;
-      
+
       if (!groupedData.has(dateKey)) {
         groupedData.set(dateKey, new Map());
       }
-      
+
       const chainMap = groupedData.get(dateKey)!;
       if (!chainMap.has(chainKey)) {
         chainMap.set(chainKey, []);
       }
-      
+
       chainMap.get(chainKey)!.push(item);
     });
 
     // 各日付・チェーンの最新データを取得
-    const result: AccumulatedStats[] = [];
-    
-    groupedData.forEach((chainMap, date) => {
-      chainMap.forEach((stats, chainName) => {
+    const result: Array<AccumulatedStats> = [];
+
+    groupedData.forEach((chainMap) => {
+      chainMap.forEach((stats) => {
         // blockTimeで並び替えて最新のものを取得
         const latestStat = stats.reduce((latest, current) => {
           return Number(current.blockTime) > Number(latest.blockTime) ? current : latest;
@@ -188,12 +174,12 @@ export const useExperiment = () => {
     });
 
     return result;
-  }, [data]);
+  }, [ data ]);
 
   // チェーンごとの最新accumulated_amount合計
   const totalAccumulatedByChain = useMemo(() => {
     const latestByChain = new Map<string, AccumulatedStats>();
-    
+
     dailyAccumulatedStats.forEach(stat => {
       const current = latestByChain.get(stat.chainName);
       if (!current || Number(stat.latestBlockTime) > Number(current.latestBlockTime)) {
@@ -202,11 +188,11 @@ export const useExperiment = () => {
     });
 
     return Array.from(latestByChain.values());
-  }, [dailyAccumulatedStats]);
+  }, [ dailyAccumulatedStats ]);
 
   // チャート用のデータ生成
   const chainChartData = useMemo(() => {
-    const chainData = new Map<string, ChartDataPoint[]>();
+    const chainData = new Map<string, Array<ChartDataPoint>>();
 
     dailyAccumulatedStats.forEach(stat => {
       if (!chainData.has(stat.chainName)) {
@@ -219,11 +205,11 @@ export const useExperiment = () => {
       });
     });
 
-    return Array.from(chainData.entries()).map(([chainName, data]) => ({
+    return Array.from(chainData.entries()).map(([ chainName, data ]) => ({
       chainName,
       data: data.sort((a, b) => a.date.localeCompare(b.date)),
     }));
-  }, [dailyAccumulatedStats]);
+  }, [ dailyAccumulatedStats ]);
 
   return React.useMemo(() => ({
     // GraphQLデータ関連
@@ -261,4 +247,4 @@ export const useExperiment = () => {
     totalAccumulatedByChain,
     chainChartData,
   ]);
-}
+};

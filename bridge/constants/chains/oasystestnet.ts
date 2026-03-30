@@ -1,7 +1,7 @@
 import { defineChain } from 'viem';
 import { chainConfig } from 'viem/op-stack';
 
-import { ChainId, TokenIndex } from '../types';
+import { ChainId } from '../types';
 
 export const OasysTestnet = /*#__PURE__*/ defineChain({
   id: ChainId.OASYS_TESTNET,
@@ -22,7 +22,7 @@ export const OasysTestnet = /*#__PURE__*/ defineChain({
     },
   },
   blockExplorers: {
-    default: {
+    'default': {
       name: 'OasysTestnet',
       url: 'https://explorer.testnet.oasys.games',
       apiUrl: 'https://explorer.testnet.oasys.games/api',

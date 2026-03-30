@@ -64,9 +64,18 @@ const TopBarStats = () => {
           <Flex columnGap={ 1 }>
             <Skeleton loading={ isPlaceholderData }>
               <chakra.span color="text.secondary">{ config.chain.currency.symbol } </chakra.span>
-              <span>${ Number(data.coin_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) }</span>
+              <span>
+                $
+                { Number(data.coin_price).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 6,
+                }) }
+              </span>
             </Skeleton>
-            { data.coin_price_change_percentage && !(isMobile && Boolean(config.UI.featuredNetworks.items) && !config.UI.navigation.showFeaturedNetworksByOldUiFlg) && (
+            { data.coin_price_change_percentage &&
+              !(isMobile &&
+              Boolean(config.UI.featuredNetworks.items) &&
+              !config.UI.navigation.showFeaturedNetworksByOldUiFlg) && (
               <Skeleton loading={ isPlaceholderData }>
                 <chakra.span color={ Number(data.coin_price_change_percentage) >= 0 ? 'green.500' : 'red.500' }>
                   { Number(data.coin_price_change_percentage).toFixed(2) }%
@@ -79,7 +88,13 @@ const TopBarStats = () => {
           <Flex columnGap={ 1 } ml={ data?.coin_price ? 3 : 0 }>
             <Skeleton loading={ isPlaceholderData }>
               <chakra.span color="text.secondary">{ config.chain.secondaryCoin.symbol } </chakra.span>
-              <span>${ Number(data.secondary_coin_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) }</span>
+              <span>
+                $
+                { Number(data.secondary_coin_price).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 6,
+                }) }
+              </span>
             </Skeleton>
           </Flex>
         ) }

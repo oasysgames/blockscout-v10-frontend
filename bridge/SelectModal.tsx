@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import React, { useCallback } from 'react';
 
 export interface SelectListItem {
   id: number;
@@ -19,19 +20,35 @@ export const SelectModal = ({
   onClose,
   onSelect,
 }: React.PropsWithChildren<SelectModalProps>) => {
-  const select = (id: number) => {
+  const select = useCallback((id: number) => {
     onSelect(id);
     onClose();
-  };
+  }, [ onClose, onSelect ]);
+
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [ onClose ]);
+
+  const handleItemClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    const { id } = event.currentTarget.dataset;
+    if (!id) {
+      return;
+    }
+
+    select(Number(id));
+  }, [ select ]);
 
   return (
     <div
       id="select-modal"
       aria-hidden="true"
-      className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      className={
+        'flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center ' +
+        'items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full'
+      }
     >
       { /* back drop */ }
-      <div className="opacity-35 fixed inset-0 z-0 bg-black" onClick={ () => onClose() }></div>
+      <div className="opacity-35 fixed inset-0 z-0 bg-black" onClick={ handleClose }></div>
       { /* content */ }
       <div className="relative p-6 max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
         { /* header */ }
@@ -44,9 +61,10 @@ export const SelectModal = ({
             { items.map((item) => (
               <div
                 key={ item.id }
+                data-id={ item.id }
                 role="button"
                 className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
-                onClick={ () => select(item.id) }
+                onClick={ handleItemClick }
               >
                 <div className="mr-4 grid place-items-center">
                   <Image

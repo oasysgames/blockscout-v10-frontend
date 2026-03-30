@@ -1,11 +1,12 @@
-import { Grid, GridItem, Skeleton } from '@chakra-ui/react';
+import { Grid, GridItem } from '@chakra-ui/react';
 import React from 'react';
 
 import type * as stats from '@blockscout/stats-types';
 import type { StatsIntervalIds } from 'types/client/stats';
 
-import ChartIntervalSelect from 'ui/shared/chart/ChartIntervalSelect';
+import { Skeleton } from 'toolkit/chakra/skeleton';
 import { FilterInput } from 'toolkit/components/filters/FilterInput';
+import ChartIntervalSelect from 'ui/shared/chart/ChartIntervalSelect';
 
 import ExperimentDropdownMenu from './ExperimentDropdownMenu';
 
@@ -33,7 +34,7 @@ const ExperimentFilters = ({
   const sectionsList = [ {
     id: 'all',
     title: 'All Verses',
-  }, ... (sections || []) ];
+  }, ...(sections || []) ];
 
   return (
     <Grid

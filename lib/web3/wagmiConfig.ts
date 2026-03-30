@@ -1,10 +1,10 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import type { AppKitNetwork } from '@reown/appkit/networks';
+import { Oasys, OasysTestnet } from 'bridge/constants/chains';
 import type { Chain, Transport } from 'viem';
 import { fallback, http } from 'viem';
 import { createConfig } from 'wagmi';
 
-import { Oasys, OasysTestnet } from 'bridge/constants/chains';
 import appConfig from 'configs/app';
 import essentialDappsChainsConfig from 'configs/essential-dapps-chains';
 import multichainConfig from 'configs/multichain';

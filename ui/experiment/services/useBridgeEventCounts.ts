@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
-import { GraphQLClient, gql } from 'graphql-request';
-import { getEnvValue } from 'configs/app/utils';
 import BigNumber from 'bignumber.js';
-import { EventType } from './useBridgeEvents';
+import { GraphQLClient, gql } from 'graphql-request';
+import { useState, useEffect } from 'react';
+
+import { getEnvValue } from 'configs/app/utils';
+
+import type { EventType } from './useBridgeEvents';
 
 // Define the GraphQL query for getting events with pagination (eventType only)
 export const BRIDGE_EVENTS_QUERY_EVENT_TYPE_ONLY = gql`
@@ -62,11 +64,11 @@ interface UseBridgeEventCountsResult {
 
 const createClient = () => {
   const url = getEnvValue('NEXT_PUBLIC_EXPERIMENT_API_URL');
-  
+
   if (!url) {
     throw new Error('NEXT_PUBLIC_EXPERIMENT_API_URL is not defined');
   }
-  
+
   return new GraphQLClient(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -78,16 +80,16 @@ export const useBridgeEventCounts = ({
   eventType = 'WITHDRAW',
   chainName = null,
 }: UseBridgeEventCountsParams = {}): UseBridgeEventCountsResult => {
-  const [data, setData] = useState<{
+  const [ data, setData ] = useState<{
     withdrawal_count: string;
     withdrawal_sum: string;
   } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [isPlaceholderData, setIsPlaceholderData] = useState(true);
+  const [ isLoading, setIsLoading ] = useState(true);
+  const [ error, setError ] = useState<Error | null>(null);
+  const [ isPlaceholderData, setIsPlaceholderData ] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async() => {
       try {
         setIsLoading(true);
         const client = createClient();
@@ -98,44 +100,44 @@ export const useBridgeEventCounts = ({
         const batchSize = 1000; // Maximum items per request
         let hasMoreData = true;
         let currentSkip = 0;
-        
+
         while (hasMoreData) {
           let response: BridgeEventResponse;
-          
+
           if (chainName) {
             response = await client.request<BridgeEventResponse>(
               BRIDGE_EVENTS_QUERY_WITH_CHAIN,
-              { 
-                eventType, 
-                chainName, 
-                first: batchSize, 
-                skip: currentSkip 
-              }
+              {
+                eventType,
+                chainName,
+                first: batchSize,
+                skip: currentSkip,
+              },
             );
           } else {
             response = await client.request<BridgeEventResponse>(
               BRIDGE_EVENTS_QUERY_EVENT_TYPE_ONLY,
-              { 
-                eventType, 
-                first: batchSize, 
-                skip: currentSkip 
-              }
+              {
+                eventType,
+                first: batchSize,
+                skip: currentSkip,
+              },
             );
           }
-          
+
           if (!response.bridgeEvents || response.bridgeEvents.length === 0) {
             hasMoreData = false;
             break;
           }
-          
+
           // Increment the total count
           totalCount += response.bridgeEvents.length;
-          
+
           // Sum the amounts in this batch
           response.bridgeEvents.forEach(event => {
             totalSum = totalSum.plus(new BigNumber(event.amount));
           });
-          
+
           // Check if we need to fetch more data
           if (response.bridgeEvents.length < batchSize) {
             hasMoreData = false;
@@ -148,11 +150,10 @@ export const useBridgeEventCounts = ({
           withdrawal_count: totalCount.toString(),
           withdrawal_sum: totalSum.toString(10),
         });
-        
+
         setIsPlaceholderData(false);
         setError(null);
       } catch (err) {
-        console.error('Error fetching bridge event counts:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch bridge event counts'));
         // Keep placeholder data in case of error
       } finally {
@@ -161,7 +162,7 @@ export const useBridgeEventCounts = ({
     };
 
     fetchData();
-  }, [eventType, chainName]);
+  }, [ eventType, chainName ]);
 
   return {
     data: data || {
@@ -169,8 +170,8 @@ export const useBridgeEventCounts = ({
       withdrawal_sum: '0',
     },
     isLoading,
-    isError: !!error,
+    isError: Boolean(error),
     error,
     isPlaceholderData,
   };
-}; 
+};

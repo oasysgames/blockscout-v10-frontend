@@ -12,7 +12,7 @@ export function ExperimentDropdownMenu<T extends string>({ items, selectedId, on
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       onSelect(event.target.value as T);
     },
-    [onSelect]
+    [ onSelect ],
   );
 
   return (
@@ -29,11 +29,11 @@ export function ExperimentDropdownMenu<T extends string>({ items, selectedId, on
       fontSize="sm"
       outline="none"
     >
-      {items.map((item) => (
+      { items.map((item) => (
         <option key={ item.id } value={ item.id }>
-          {item.title}
+          { item.title }
         </option>
-      ))}
+      )) }
     </Box>
   );
 }

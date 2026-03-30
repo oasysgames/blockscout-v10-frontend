@@ -1,8 +1,9 @@
 import { defineChain } from 'viem';
 import { chainConfig } from 'viem/op-stack';
 
-import config from 'configs/app';
 import { ChainId } from '../types';
+
+import config from 'configs/app';
 
 export const SandVerse = /*#__PURE__*/ defineChain({
   ...chainConfig,
@@ -24,9 +25,8 @@ export const SandVerse = /*#__PURE__*/ defineChain({
     ...chainConfig.contracts,
     l1StandardBridge: {
       [ChainId.OASYS_TESTNET]: {
-        address: config.verse.bridge.l1BridgeAddress as `0x${string}`,
+        address: config.verse.bridge.l1BridgeAddress as `0x${ string }`,
       },
     },
   },
 });
-

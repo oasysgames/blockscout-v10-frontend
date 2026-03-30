@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
 import { GraphQLClient, gql } from 'graphql-request';
+import { useState, useEffect } from 'react';
+
 import { getEnvValue } from 'configs/app/utils';
 
 // Define the GraphQL query for events with eventType only
@@ -96,7 +97,7 @@ export interface BridgeEvent {
 }
 
 export interface BridgeEventsResponse {
-  bridgeEvents: BridgeEvent[];
+  bridgeEvents: Array<BridgeEvent>;
 }
 
 export interface BridgeEventsCountResponse {
@@ -113,7 +114,7 @@ interface UseBridgeEventsParams {
 }
 
 interface UseBridgeEventsResult {
-  data: BridgeEvent[];
+  data: Array<BridgeEvent>;
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -128,11 +129,11 @@ interface UseBridgeEventsResult {
 
 const createClient = () => {
   const url = getEnvValue('NEXT_PUBLIC_EXPERIMENT_API_URL');
-  
+
   if (!url) {
     throw new Error('NEXT_PUBLIC_EXPERIMENT_API_URL is not defined');
   }
-  
+
   return new GraphQLClient(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -146,45 +147,45 @@ export const useBridgeEvents = ({
   eventType = 'WITHDRAW',
   chainName = null,
 }: UseBridgeEventsParams = {}): UseBridgeEventsResult => {
-  const [data, setData] = useState<BridgeEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [totalItems, setTotalItems] = useState<number | undefined>(undefined);
-  const [totalPages, setTotalPages] = useState<number | undefined>(undefined);
+  const [ data, setData ] = useState<Array<BridgeEvent>>([]);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ error, setError ] = useState<Error | null>(null);
+  const [ hasNextPage, setHasNextPage ] = useState(false);
+  const [ totalItems, setTotalItems ] = useState<number | undefined>(undefined);
+  const [ totalPages, setTotalPages ] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async() => {
       try {
         setIsLoading(true);
         const client = createClient();
 
         // First, get the total count of items
         let countResponse: BridgeEventsCountResponse;
-        
+
         if (chainName) {
           countResponse = await client.request<BridgeEventsCountResponse>(
             BRIDGE_EVENTS_COUNT_QUERY_WITH_CHAIN,
             {
               eventType,
               chainName,
-            }
+            },
           );
         } else {
           countResponse = await client.request<BridgeEventsCountResponse>(
             BRIDGE_EVENTS_COUNT_QUERY_EVENT_TYPE_ONLY,
             {
               eventType,
-            }
+            },
           );
         }
-        
+
         // Calculate total items and pages
         const count = countResponse.bridgeEvents.length;
         setTotalItems(count);
         const calculatedTotalPages = Math.ceil(count / itemsPerPage);
         setTotalPages(calculatedTotalPages);
-        
+
         // Then, get the actual data for the current page
         let response: BridgeEventsResponse;
 
@@ -199,8 +200,8 @@ export const useBridgeEvents = ({
           };
 
           response = await client.request<BridgeEventsResponse>(
-            BRIDGE_EVENTS_QUERY_WITH_CHAIN, 
-            requestParams
+            BRIDGE_EVENTS_QUERY_WITH_CHAIN,
+            requestParams,
           );
         } else {
           // If chainName is not provided, use the query without chainName filter
@@ -211,13 +212,12 @@ export const useBridgeEvents = ({
           };
 
           response = await client.request<BridgeEventsResponse>(
-            BRIDGE_EVENTS_QUERY_EVENT_TYPE_ONLY, 
-            requestParams
+            BRIDGE_EVENTS_QUERY_EVENT_TYPE_ONLY,
+            requestParams,
           );
         }
 
         if (!response.bridgeEvents) {
-          console.error('[Frontend] Response does not contain bridgeEvents:', response);
           setData([]);
           return;
         }
@@ -225,13 +225,12 @@ export const useBridgeEvents = ({
         // Ensure we only return exactly itemsPerPage items
         const limitedData = response.bridgeEvents.slice(0, itemsPerPage);
         setData(limitedData);
-        
+
         // Check if there are more pages
         setHasNextPage(page < calculatedTotalPages);
-        
+
         setError(null);
       } catch (err) {
-        console.error('Error fetching bridge events:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch bridge events'));
         setData([]);
       } finally {
@@ -240,12 +239,12 @@ export const useBridgeEvents = ({
     };
 
     fetchData();
-  }, [page, itemsPerPage, eventType, chainName]);
+  }, [ page, itemsPerPage, eventType, chainName ]);
 
   return {
     data,
     isLoading,
-    isError: !!error,
+    isError: Boolean(error),
     error,
     pagination: {
       currentPage: page,

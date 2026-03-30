@@ -4,7 +4,8 @@ import { parseUnits } from 'viem';
 import { waitForTransactionReceipt } from 'viem/actions';
 import { useWriteContract, useSwitchChain, useAccount, usePublicClient } from 'wagmi';
 
-import { ChainId, TokenIndex } from '../constants/types';
+import type { ChainId } from '../constants/types';
+import { TokenIndex } from '../constants/types';
 
 import { l1StandardBridgeAbi, l2StandardBridgeAbi } from '../constants/abis';
 import { getChainInfo, getTokenAddress } from '../constants/chains';
@@ -16,7 +17,7 @@ type UseDepositWithdrawReturn = [
   boolean, // isLoading
   string | undefined, // tx hash
   string | undefined, // error message
-]
+];
 
 // for Withdraw
 const l2StandardBridgeAddr = '0x4200000000000000000000000000000000000010';
@@ -71,7 +72,7 @@ export function useDepositWithdraw(verseVersion: 0 | 1, chainId: number): UseDep
         const l1Address = getTokenAddress(l1ChainId, tokenInd);
         const l2Address = getTokenAddress(l2ChainId, tokenInd);
 
-        const hash = await approve(
+        await approve(
           l1Address as Address,
           l1ChainId,
           parsedAmount,
@@ -87,7 +88,7 @@ export function useDepositWithdraw(verseVersion: 0 | 1, chainId: number): UseDep
         });
       }
     },
-    [ address, chainId, switchChainAsync, writeContractAsync, approve ],
+    [ address, switchChainAsync, writeContractAsync, approve ],
   );
 
   // Withdraw
@@ -118,7 +119,7 @@ export function useDepositWithdraw(verseVersion: 0 | 1, chainId: number): UseDep
         account: address,
       });
     },
-    [ address, chainId, switchChainAsync, writeContractAsync ],
+    [ address, switchChainAsync, verseVersion, writeContractAsync ],
   );
 
   useEffect(() => {
