@@ -1,37 +1,19 @@
 import React from 'react';
 
-import type { AddressWithdrawalsItem } from 'types/api/address';
-import type { BlockWithdrawalsItem } from 'types/api/block';
-import type { WithdrawalsItem } from 'types/api/withdrawals';
+import type { OasysAddressListItem, OasysBlockListItem, OasysListItem } from 'ui/oasys/types';
 
 import { currencyUnits } from 'lib/units';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { TableRow, TableCell } from 'toolkit/chakra/table';
-import CurrencyValue from 'ui/shared/CurrencyValue';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import AddressEntityL1 from 'ui/shared/entities/address/AddressEntityL1';
 import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 import TimeWithTooltip from 'ui/shared/time/TimeWithTooltip';
-
-// Extend the types to include our custom properties
-interface ExtendedDepositsItem extends WithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedAddressDepositsItem extends AddressWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedBlockDepositsItem extends BlockWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
+import NativeCoinValue from 'ui/shared/value/NativeCoinValue';
 
 type Props = {
-  item: ExtendedDepositsItem | ExtendedAddressDepositsItem | ExtendedBlockDepositsItem;
+  item: OasysListItem | OasysAddressListItem | OasysBlockListItem;
   view: 'list' | 'address' | 'block';
   isLoading?: boolean;
 };
@@ -40,7 +22,7 @@ type Props = {
 const hasBlockNumber = (item: object): item is { block_number: number } =>
   'block_number' in item;
 
-const hasReceiver = (item: object): item is { receiver: ExtendedDepositsItem['receiver'] } =>
+const hasReceiver = (item: object): item is { receiver: OasysListItem['receiver'] } =>
   'receiver' in item;
 
 const hasTimestamp = (item: object): item is { timestamp: string } =>
@@ -119,7 +101,7 @@ const OasysL2ChainDepositsTableItem = ({ item, view, isLoading }: Props) => {
         </TableCell>
       ) }
       <TableCell>
-        <CurrencyValue value={ item.amount } currency={ currencyUnits.ether } isLoading={ isLoading }/>
+        <NativeCoinValue amount={ item.amount } asset={ currencyUnits.ether } loading={ isLoading } noSymbol/>
       </TableCell>
     </TableRow>
   );

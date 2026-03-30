@@ -2,8 +2,10 @@ import { Box, Text } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React, { useState, useCallback } from 'react';
 
+import { createAddressParam } from 'ui/oasys/types';
+import type { OasysListItem } from 'ui/oasys/types';
+
 import config from 'configs/app';
-import getCurrencyValue from 'lib/getCurrencyValue';
 import { currencyUnits } from 'lib/units';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { rightLineArrow, nbsp } from 'toolkit/utils/htmlEntities';
@@ -16,38 +18,14 @@ import { ACTION_BAR_HEIGHT_DESKTOP } from 'ui/shared/ActionBar';
 import DataListDisplay from 'ui/shared/DataListDisplay';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import StickyPaginationWithText from 'ui/shared/StickyPaginationWithText';
+import calculateUsdValue from 'ui/shared/value/calculateUsdValue';
 
 const ITEMS_PER_PAGE = 20;
-
-// Extend the DepositsItem type to include custom properties
-interface ExtendedDepositsItem {
-  index: number;
-  validator_index: number;
-  receiver: {
-    hash: string;
-    implementation_name: null;
-    implementations: null;
-    is_contract: boolean;
-    is_verified: boolean;
-    name: null;
-    ens_domain_name: null;
-    private_tags: null;
-    public_tags: null;
-    watchlist_names: Array<unknown>;
-  };
-  amount: string;
-  block_number: number;
-  timestamp: string;
-  tx_hash: string;
-  // Custom properties to store the original values
-  transactionHash?: string;
-  chainName?: string;
-}
 
 const OasysL2ChainDeposits = () => {
   const [ currentPage, setCurrentPage ] = useState(1);
   const eventType: EventType = 'DEPOSIT';
-  const chainName = config.verse.bridge.l2ChainName;
+  const chainName = config.verse.bridge.l2ChainName();
 
   // Fetch bridge event data
   const { data, isLoading, isError, pagination } = useBridgeEvents({
@@ -79,32 +57,17 @@ const OasysL2ChainDeposits = () => {
   }, []);
 
   // Transform bridge event data into a format compatible with the components
-  const transformedItems = data.map((event) => {
+  const transformedItems: Array<OasysListItem> = data.map((event) => {
     return {
-      // Use blockNumber as index (must be a number)
       index: parseInt(event.blockNumber) || 0,
-      // Use a placeholder for validator_index
       validator_index: 0,
-      receiver: {
-        hash: event.to,
-        implementation_name: null,
-        implementations: null,
-        is_contract: false,
-        is_verified: false,
-        name: null,
-        ens_domain_name: null,
-        private_tags: null,
-        public_tags: null,
-        watchlist_names: [],
-      },
+      receiver: createAddressParam(event.to),
       amount: event.amount,
       block_number: parseInt(event.blockNumber) || 0,
       timestamp: event.timestamp,
-      tx_hash: event.transactionHash,
-      // Store the original values in custom properties
       transactionHash: event.transactionHash,
       chainName: event.chainName,
-    } as ExtendedDepositsItem;
+    };
   });
 
   // Content to display based on the screen size
@@ -141,7 +104,7 @@ const OasysL2ChainDeposits = () => {
         { countersQuery.data && (
           <Text lineHeight={{ base: '24px', lg: '32px' }}>
             { BigNumber(countersQuery.data.withdrawal_count).toFormat() } deposits have been processed
-            and { getCurrencyValue({ value: countersQuery.data.withdrawal_sum }).valueStr } { currencyUnits.ether } has been deposited
+            and { calculateUsdValue({ amount: countersQuery.data.withdrawal_sum, decimals: 18 }).valueStr } { currencyUnits.ether } has been deposited
           </Text>
         ) }
       </Skeleton>

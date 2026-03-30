@@ -51,7 +51,7 @@ const ExperimentFilters = ({
         w={{ base: '100%', lg: 'auto' }}
         area="section"
       >
-        { isLoading ? <Skeleton w={{ base: '100%', lg: '103px' }} h="32px" borderRadius="base"/> : (
+        { isLoading ? <Skeleton loading w={{ base: '100%', lg: '103px' }} h="32px" borderRadius="base"/> : (
           <ExperimentDropdownMenu
             items={ sectionsList }
             selectedId={ currentSection }

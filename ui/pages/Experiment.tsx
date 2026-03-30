@@ -11,9 +11,11 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
+import type { TimeChartData } from 'toolkit/components/charts/types';
+
 import { useColorModeValue } from 'toolkit/chakra/color-mode';
 import { Image } from 'toolkit/chakra/image';
-import ChartWidget from 'ui/shared/chart/ChartWidget';
+import { ChartWidget } from 'toolkit/components/charts/ChartWidget';
 
 import { useExperiment } from '../experiment/useExperiment';
 
@@ -305,16 +307,24 @@ const Experiment = () => {
       { chainChartData.map((chain) => (
         <Box key={ chain.chainName } mb={ 6 }>
           <ChartWidget
+            charts={ [ {
+              id: chain.chainName,
+              name: chain.chainName,
+              items: chain.data.map((item) => ({
+                date: new Date(item.date),
+                value: Number(item.value),
+              })),
+              charts: [ {
+                type: 'line',
+                color: '#3182CE',
+              } ],
+              units: 'OAS',
+              valueFormatter: formatChartValue,
+            } ] as TimeChartData }
             title={ `${ chain.chainName } Total Deposit History` }
             description="Daily total deposit"
-            items={ chain.data.map((item) => ({
-              date: new Date(item.date),
-              value: Number(item.value),
-            })) }
             isLoading={ isLoading }
             isError={ Boolean(error) }
-            units="OAS"
-            valueFormatter={ formatChartValue }
           />
         </Box>
       )) }

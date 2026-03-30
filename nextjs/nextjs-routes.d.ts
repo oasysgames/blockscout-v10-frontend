@@ -33,6 +33,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/batches/[number]", { "number": string }>
     | DynamicRoute<"/batches/celestia/[height]/[commitment]", { "height": string; "commitment": string }>
     | StaticRoute<"/batches">
+    | StaticRoute<"/bridge">
     | DynamicRoute<"/blobs/[hash]", { "hash": string }>
     | DynamicRoute<"/block/[height_or_hash]", { "height_or_hash": string }>
     | DynamicRoute<"/block/countdown/[height]", { "height": string }>
@@ -60,6 +61,8 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/epochs/[number]", { "number": string }>
     | StaticRoute<"/epochs">
     | DynamicRoute<"/essential-dapps/[id]", { "id": string }>
+    | DynamicRoute<"/experiment/[id]", { "id": string }>
+    | StaticRoute<"/experiment">
     | StaticRoute<"/gas-tracker">
     | StaticRoute<"/hot-contracts">
     | StaticRoute<"/">

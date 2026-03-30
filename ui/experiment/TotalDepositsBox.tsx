@@ -56,7 +56,7 @@ const TotalDepositsBox: React.FC<TotalDepositsBoxProps> = ({ data, isLoading, er
       <Flex direction="column" gap={ 4 }>
         { isLoading ? (
           Array(3).fill(0).map((_, i) => (
-            <Skeleton key={ i } height="60px"/>
+            <Skeleton key={ i } loading height="60px"/>
           ))
         ) : (
           chainTotals.map((chain) => (

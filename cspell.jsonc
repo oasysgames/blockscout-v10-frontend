@@ -284,6 +284,20 @@
         "zkevm",
         "zksolc",
         "zksync",
-        "zora"
+        "zora",
+
+        // For Oasys
+        "OASYS",
+        "Oasys",
+        "oasys",
+        "oasystestnet",
+        "Saakuru",
+        "saakuru",
+        "XPLA",
+        "xpla",
+        "Yooldo",
+        "yooldo",
+        "Geso",
+        "geso"
     ]
 }

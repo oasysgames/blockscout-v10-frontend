@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import React, { useCallback } from 'react';
 
 type Props<T extends string> = {
@@ -16,25 +15,26 @@ export function ExperimentDropdownMenu<T extends string>({ items, selectedId, on
   );
 
   return (
-    <Box
-      as="select"
+    <select
       value={ selectedId }
       onChange={ handleSelection }
-      w="100%"
-      h="32px"
-      px={ 3 }
-      borderWidth="1px"
-      borderRadius="md"
-      bg="transparent"
-      fontSize="sm"
-      outline="none"
+      style={{
+        width: '100%',
+        height: '32px',
+        padding: '0 12px',
+        borderWidth: '1px',
+        borderRadius: '0.375rem',
+        background: 'transparent',
+        fontSize: '0.875rem',
+        outline: 'none',
+      }}
     >
       { items.map((item) => (
         <option key={ item.id } value={ item.id }>
           { item.title }
         </option>
       )) }
-    </Box>
+    </select>
   );
 }
 

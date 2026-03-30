@@ -1,8 +1,6 @@
 import React from 'react';
 
-import type { AddressWithdrawalsItem } from 'types/api/address';
-import type { BlockWithdrawalsItem } from 'types/api/block';
-import type { WithdrawalsItem } from 'types/api/withdrawals';
+import type { OasysAddressListItem, OasysBlockListItem, OasysListItem } from 'ui/oasys/types';
 
 import config from 'configs/app';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
@@ -18,35 +16,20 @@ import OasysL1ChainWithdrawalsTableItem from './OasysL1ChainWithdrawalsTableItem
 
 const feature = config.features.beaconChain;
 
-interface ExtendedWithdrawalsItem extends WithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedAddressWithdrawalsItem extends AddressWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedBlockWithdrawalsItem extends BlockWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
 type Props = {
   top: number;
   isLoading?: boolean;
 } & (
   | {
-    items: Array<ExtendedWithdrawalsItem>;
+    items: Array<OasysListItem>;
     view: 'list';
   } |
   {
-    items: Array<ExtendedAddressWithdrawalsItem>;
+    items: Array<OasysAddressListItem>;
     view: 'address';
   } |
   {
-    items: Array<ExtendedBlockWithdrawalsItem>;
+    items: Array<OasysBlockListItem>;
     view: 'block';
   }
 );

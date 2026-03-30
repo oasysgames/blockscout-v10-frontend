@@ -1,5 +1,5 @@
+import type { TimeChartItem } from 'toolkit/components/charts/types';
 import type { StatsIntervalIds } from 'types/client/stats';
-import type { TimeChartItem } from 'ui/shared/chart/types';
 
 import { STATS_INTERVALS } from 'ui/stats/constants';
 
@@ -48,9 +48,8 @@ const data: Array<TimeChartItem> = [
 
 export function getVerseDailyAmount(id: string, interval: StatsIntervalIds): Promise<Array<TimeChartItem>> {
   const selectedInterval = STATS_INTERVALS[interval];
-
-  // eslint-disable-next-line
-  console.log(selectedInterval, id);
+  void id;
+  void selectedInterval;
 
   return Promise.resolve(data);
 }

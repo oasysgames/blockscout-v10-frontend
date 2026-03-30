@@ -1,8 +1,8 @@
 import React from 'react';
 
-import type { TimeChartItem } from 'ui/shared/chart/types';
+import type { TimeChartData, TimeChartItem } from 'toolkit/components/charts/types';
 
-import ChartWidget from 'ui/shared/chart/ChartWidget';
+import { ChartWidget } from 'toolkit/components/charts/ChartWidget';
 
 interface DailyBridgeStat {
   id: string;
@@ -40,15 +40,24 @@ const DepositHistoryChart: React.FC<DepositHistoryChartProps> = ({ data, isLoadi
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [ data ]);
+  const charts: TimeChartData = React.useMemo(() => ([ {
+    id: 'deposit-history',
+    name: 'Deposit history',
+    items: chartData,
+    charts: [ {
+      type: 'line',
+      color: '#3182CE',
+    } ],
+    units: 'OAS',
+  } ]), [ chartData ]);
 
   return (
     <ChartWidget
       title="デポジット推移"
       description="日次デポジット量の合計"
-      items={ chartData }
+      charts={ charts }
       isLoading={ isLoading }
       isError={ Boolean(error) }
-      units="OAS"
     />
   );
 };

@@ -1,39 +1,21 @@
 import React from 'react';
 
-import type { AddressWithdrawalsItem } from 'types/api/address';
-import type { BlockWithdrawalsItem } from 'types/api/block';
-import type { WithdrawalsItem } from 'types/api/withdrawals';
+import type { OasysAddressListItem, OasysBlockListItem, OasysListItem } from 'ui/oasys/types';
 
 import config from 'configs/app';
 import { currencyUnits } from 'lib/units';
 import { Skeleton } from 'toolkit/chakra/skeleton';
-import CurrencyValue from 'ui/shared/CurrencyValue';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
 import ListItemMobileGrid from 'ui/shared/ListItemMobile/ListItemMobileGrid';
 import TimeWithTooltip from 'ui/shared/time/TimeWithTooltip';
+import NativeCoinValue from 'ui/shared/value/NativeCoinValue';
 
 const feature = config.features.beaconChain;
 
-// Extend the types to include our custom properties
-interface ExtendedWithdrawalsItem extends WithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedAddressWithdrawalsItem extends AddressWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedBlockWithdrawalsItem extends BlockWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
 type Props = {
-  item: ExtendedWithdrawalsItem | ExtendedAddressWithdrawalsItem | ExtendedBlockWithdrawalsItem;
+  item: OasysListItem | OasysAddressListItem | OasysBlockListItem;
   view: 'list' | 'address' | 'block';
   isLoading?: boolean;
 };
@@ -42,7 +24,7 @@ type Props = {
 const hasBlockNumber = (item: object): item is { block_number: number } =>
   'block_number' in item;
 
-const hasReceiver = (item: object): item is { receiver: ExtendedWithdrawalsItem['receiver'] } =>
+const hasReceiver = (item: object): item is { receiver: OasysListItem['receiver'] } =>
   'receiver' in item;
 
 const hasTimestamp = (item: object): item is { timestamp: string } =>
@@ -158,7 +140,7 @@ const OasysL1ChainWithdrawalsListItem = ({ item, view, isLoading }: Props) => {
       <>
         <ListItemMobileGrid.Label isLoading={ isLoading }>Amount</ListItemMobileGrid.Label>
         <ListItemMobileGrid.Value>
-          <CurrencyValue value={ item.amount } currency={ currencyUnits.ether } isLoading={ isLoading }/>
+          <NativeCoinValue amount={ item.amount } asset={ currencyUnits.ether } loading={ isLoading } noSymbol/>
         </ListItemMobileGrid.Value>
       </>
     </ListItemMobileGrid.Container>

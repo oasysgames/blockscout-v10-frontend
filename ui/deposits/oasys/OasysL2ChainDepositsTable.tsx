@@ -1,8 +1,6 @@
 import React from 'react';
 
-import type { AddressWithdrawalsItem } from 'types/api/address';
-import type { BlockWithdrawalsItem } from 'types/api/block';
-import type { WithdrawalsItem } from 'types/api/withdrawals';
+import type { OasysAddressListItem, OasysBlockListItem, OasysListItem } from 'ui/oasys/types';
 
 import config from 'configs/app';
 import useLazyRenderedList from 'lib/hooks/useLazyRenderedList';
@@ -12,34 +10,18 @@ import OasysL2ChainDepositsTableItem from './OasysL2ChainDepositsTableItem';
 
 const feature = config.features.beaconChain;
 
-// Extend the types to include our custom properties
-interface ExtendedDepositsItem extends WithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedAddressDepositsItem extends AddressWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
-interface ExtendedBlockDepositsItem extends BlockWithdrawalsItem {
-  transactionHash?: string;
-  chainName?: string;
-}
-
 // Define the props for the table item component
 type Props = {
   top: number;
   isLoading?: boolean;
 } & ({
-  items: Array<ExtendedDepositsItem>;
+  items: Array<OasysListItem>;
   view: 'list';
 } | {
-  items: Array<ExtendedAddressDepositsItem>;
+  items: Array<OasysAddressListItem>;
   view: 'address';
 } | {
-  items: Array<ExtendedBlockDepositsItem>;
+  items: Array<OasysBlockListItem>;
   view: 'block';
 });
 
@@ -64,7 +46,7 @@ const OasysL2ChainDepositsTable = ({ items, isLoading, top, view }: Props) => {
       </TableHeaderSticky>
       <TableBody>
         { view === 'list' &&
-          (items as Array<ExtendedDepositsItem>)
+          (items as Array<OasysListItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
@@ -75,7 +57,7 @@ const OasysL2ChainDepositsTable = ({ items, isLoading, top, view }: Props) => {
               />
             )) }
         { view === 'address' &&
-          (items as Array<ExtendedAddressDepositsItem>)
+          (items as Array<OasysAddressListItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
@@ -86,7 +68,7 @@ const OasysL2ChainDepositsTable = ({ items, isLoading, top, view }: Props) => {
               />
             )) }
         { view === 'block' &&
-          (items as Array<ExtendedBlockDepositsItem>)
+          (items as Array<OasysBlockListItem>)
             .slice(0, renderedItemsNum)
             .map((item, index) => (
               <OasysL2ChainDepositsTableItem
