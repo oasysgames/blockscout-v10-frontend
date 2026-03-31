@@ -1,14 +1,14 @@
 import { getEnvValue, getExternalAssetFilePath } from './utils';
 
 // Define token interface
-interface Token {
+export interface Token {
   address: string;
   name: string;
   symbol: string;
 }
 
 // Token list interface
-interface TokenList {
+export interface TokenList {
   tokens: Array<Token>;
 }
 
