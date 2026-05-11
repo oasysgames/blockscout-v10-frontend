@@ -85,6 +85,7 @@ const schema = yup
       }),
     NEXT_PUBLIC_VALIDATORS_CHAIN_TYPE: yup.string<ValidatorsChainType>().oneOf(VALIDATORS_CHAIN_TYPE),
     NEXT_PUBLIC_GAS_TRACKER_ENABLED: yup.boolean(),
+    NEXT_PUBLIC_PRICE_TRACKER_DISABLE: yup.boolean(),
     NEXT_PUBLIC_GAS_TRACKER_UNITS: yup.array().transform(replaceQuotes).json().of(yup.string<GasUnit>().oneOf(GAS_UNITS)),
     NEXT_PUBLIC_DATA_AVAILABILITY_ENABLED: yup.boolean(),
     NEXT_PUBLIC_ADVANCED_FILTER_ENABLED: yup.boolean(),
@@ -131,6 +132,22 @@ const schema = yup
       }),
     NEXT_PUBLIC_FLASHBLOCKS_SOCKET_URL: yup.string().test(urlTest),
     NEXT_PUBLIC_HOT_CONTRACTS_ENABLED: yup.boolean(),
+    NEXT_PUBLIC_EXPERIMENT_VISIBLE: yup.boolean(),
+    NEXT_PUBLIC_EXPERIMENT_API_URL: yup.string().test(urlTest),
+    NEXT_PUBLIC_MENU_BRIDGE_VISIBLE: yup.boolean(),
+    NEXT_PUBLIC_L2_CHAIN_ID: yup.number().positive().integer(),
+    NEXT_PUBLIC_L1_BRIDGE_ADDRESS: yup.string(),
+    NEXT_PUBLIC_VERSE_VERSION: yup.number().positive().integer(),
+    NEXT_PUBLIC_UPDATED_TOKENS: yup.string(),
+    NEXT_PUBLIC_HEADER_ALERT_ENABLED: yup.boolean(),
+    NEXT_PUBLIC_HEADER_ALERT_EXPLORER_URL: yup.string().test(urlTest),
+    NEXT_PUBLIC_HEADER_ALERT_DISCORD_URL: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_IMAGE_URL_1: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_LINK_URL_1: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_IMAGE_URL_2: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_LINK_URL_2: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_IMAGE_URL_3: yup.string().test(urlTest),
+    NEXT_PUBLIC_BANNER_LINK_URL_3: yup.string().test(urlTest),
 
     // Misc
     NEXT_PUBLIC_USE_NEXT_JS_PROXY: yup.boolean(),
@@ -145,6 +162,7 @@ const schema = yup
   .concat(uiSchemas.footerSchema)
   .concat(uiSchemas.miscSchema)
   .concat(uiSchemas.viewsSchema)
+  .concat(uiSchemas.bridgeSchema)
   .concat(featuresSchemas.accountSchema)
   .concat(featuresSchemas.address3rdPartyWidgetsConfigSchema)
   .concat(featuresSchemas.adsSchema)

@@ -173,6 +173,7 @@ export const navigationSchema = yup.object({
     NEXT_PUBLIC_NETWORK_LOGO_DARK: yup.string().test(urlTest),
     NEXT_PUBLIC_NETWORK_ICON: yup.string().test(urlTest),
     NEXT_PUBLIC_NETWORK_ICON_DARK: yup.string().test(urlTest),
+    NEXT_PUBLIC_SHOW_FEATURED_NETWORKS_BY_OLD_UI: yup.boolean(),
 });
 
 const footerLinkSchema: yup.ObjectSchema<CustomLink> = yup
@@ -340,4 +341,11 @@ export const viewsSchema = yup.object({
       .json()
       .of(contractCodeIdeSchema),
     NEXT_PUBLIC_HAS_CONTRACT_AUDIT_REPORTS: yup.boolean(),
+});
+
+export const bridgeSchema = yup.object({
+  NEXT_PUBLIC_MENU_BRIDGE_VISIBLE: yup.boolean(),
+  NEXT_PUBLIC_L2_CHAIN_ID: yup.number().positive().integer(),
+  NEXT_PUBLIC_L1_BRIDGE_ADDRESS: yup.string(),
+  NEXT_PUBLIC_VERSE_VERSION: yup.number().positive().integer(),
 });

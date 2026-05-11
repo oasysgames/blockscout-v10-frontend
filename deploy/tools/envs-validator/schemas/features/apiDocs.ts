@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import { replaceQuotes } from 'configs/app/utils';
 import type { ApiDocsTabId } from 'types/views/apiDocs';
 import { API_DOCS_TABS } from 'types/views/apiDocs';
+import { urlTest } from '../../utils';
 
 export const apiDocsSchema = yup
   .object()
@@ -10,4 +11,7 @@ export const apiDocsSchema = yup
       .transform(replaceQuotes)
       .json()
       .of(yup.string<ApiDocsTabId>().oneOf(API_DOCS_TABS)),
+    NEXT_PUBLIC_API_SPEC_URL: yup
+      .string()
+      .test(urlTest),
   });

@@ -1,5 +1,6 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import type { AppKitNetwork } from '@reown/appkit/networks';
+import { Oasys, OasysTestnet } from 'bridge/constants/chains';
 import type { Chain, Transport } from 'viem';
 import { fallback, http } from 'viem';
 import { createConfig } from 'wagmi';
@@ -10,6 +11,11 @@ import multichainConfig from 'configs/multichain';
 import { chains, parentChain } from 'lib/web3/chains';
 
 const feature = appConfig.features.blockchainInteraction;
+const bridgeChains = appConfig.verse.bridge.isVisible ? [ Oasys, OasysTestnet ] : [];
+const wagmiChains = [
+  ...chains,
+  ...bridgeChains.filter((chain) => !chains.some((item) => item.id === chain.id)),
+];
 
 const getChainTransportFromConfig = (config: Partial<typeof appConfig> | undefined, readOnly?: boolean): Record<string, Transport> => {
   if (!config?.chain?.id) {
@@ -49,8 +55,12 @@ const wagmi = (() => {
 
   if (!feature.isEnabled || feature.connectorType === 'dynamic') {
     const wagmiConfig = createConfig({
-      chains: chains as [Chain, ...Array<Chain>],
+      chains: wagmiChains as [Chain, ...Array<Chain>],
       transports: {
+        ...bridgeChains.reduce<Record<number, Transport>>((result, chain) => {
+          result[chain.id] = http(chain.rpcUrls.default.http[0]);
+          return result;
+        }, {}),
         ...getChainTransportFromConfig(appConfig, true),
         ...(parentChain ? { [parentChain.id]: http(parentChain.rpcUrls.default.http[0]) } : {}),
         ...reduceExternalChainsToTransportConfig(true),
@@ -64,9 +74,13 @@ const wagmi = (() => {
   }
 
   const wagmiAdapter = new WagmiAdapter({
-    networks: chains as Array<AppKitNetwork>,
+    networks: wagmiChains as Array<AppKitNetwork>,
     multiInjectedProviderDiscovery: true,
     transports: {
+      ...bridgeChains.reduce<Record<number, Transport>>((result, chain) => {
+        result[chain.id] = http(chain.rpcUrls.default.http[0]);
+        return result;
+      }, {}),
       ...getChainTransportFromConfig(appConfig, false),
       ...(parentChain ? { [parentChain.id]: http() } : {}),
       ...reduceExternalChainsToTransportConfig(false),

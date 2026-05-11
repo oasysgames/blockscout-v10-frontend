@@ -29,6 +29,10 @@ const Deposits = dynamic(() => {
     return import('ui/pages/ScrollL2Deposits');
   }
 
+  if (rollupFeature.isEnabled && rollupFeature.type === 'oasys') {
+    return import('ui/pages/OasysL2ChainDeposits');
+  }
+
   if (beaconChainFeature.isEnabled && !beaconChainFeature.withdrawalsOnly) {
     return import('ui/pages/BeaconChainDeposits');
   }

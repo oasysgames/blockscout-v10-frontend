@@ -53,6 +53,7 @@ All json-like values should be single-quoted. If it contains a hash (`#`) or a d
   - [Solidity to UML diagrams](#solidity-to-uml-diagrams)
   - [Blockchain statistics](#blockchain-statistics)
   - [Web3 wallet integration](#web3-wallet-integration-add-token-or-network-to-the-wallet) (add token or network to the wallet)
+  - [Bridge menu](#bridge-menu)
   - [Transaction interpretation](#transaction-interpretation)
   - [Verified tokens info](#verified-tokens-info)
   - [Name service integration](#name-service-integration)
@@ -594,6 +595,7 @@ Ads are enabled by default on all self-hosted instances. If you would like to di
 | Variable | Type| Description | Compulsoriness  | Default value | Example value | Version |
 | --- | --- | --- | --- | --- | --- | --- |
 | NEXT_PUBLIC_API_DOCS_TABS | `Array<TabId>` | Controls which tabs appear on the API documentation page. Possible values for `TabId` are `rest_api`, `eth_rpc_api`, `rpc_api`, and `graphql_api`. **Note** that this variable has a default value, so the feature is enabled by default. Pass an empty array to disable it. | - | `['rest_api','eth_rpc_api','rpc_api','graphql_api']` | `[]` | v2.3.x+ |
+| NEXT_PUBLIC_API_SPEC_URL | `string` | URL of the OpenAPI specification file used for REST API documentation. | - | - | `https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml` | v1.0.x+ |
 | NEXT_PUBLIC_API_DOCS_ALERT_MESSAGE | `string` | Used for displaying custom alerts on the API documentation page. Could be a regular string or a HTML code. | - | - | `Hello world! 🤪` | v2.7.0+ |
 
 &nbsp;
@@ -677,6 +679,17 @@ This feature is **enabled by default** with the `['metamask']` value. To switch 
 | --- | --- | --- | --- | --- | --- | --- |
 | NEXT_PUBLIC_WEB3_WALLETS | `Array<'metamask' \| 'coinbase' \| 'token_pocket' \| 'rabby' \| 'trust' \| 'okx'>` | Array of Web3 wallets which will be used  to add tokens or chain to. The first wallet which is enabled in user's browser will be shown. | - | `[ 'metamask', 'rabby', 'coinbase', 'trust', 'okx', 'token_pocket' ]` | `[ 'coinbase' ]` | v1.10.0+ |
 | NEXT_PUBLIC_WEB3_DISABLE_ADD_TOKEN_TO_WALLET | `boolean`| Set to `true` to hide icon "Add to your wallet" next to token addresses | - | - | `true` | v1.0.x+ |
+
+&nbsp;
+
+### Bridge menu
+
+| Variable | Type| Description | Compulsoriness  | Default value | Example value | Version |
+| --- | --- | --- | --- | --- | --- | --- |
+| NEXT_PUBLIC_MENU_BRIDGE_VISIBLE | `boolean` | Set to `true` to show the bridge menu item. | - | `false` | `true` | v2.0.0+ |
+| NEXT_PUBLIC_L1_BRIDGE_ADDRESS | `string` | L1 bridge contract address used by the bridge menu integration. | - | `0x9245e19eB88de2534E03E764FB2a5f194e6d97AD` | `0x9245e19eB88de2534E03E764FB2a5f194e6d97AD` | v2.0.0+ |
+| NEXT_PUBLIC_L2_CHAIN_ID | `number` | L2 chain id used by the bridge menu integration. | - | `2400` | `2400` | v2.0.0+ |
+| NEXT_PUBLIC_VERSE_VERSION | `number` | Verse version used by the bridge menu integration. | - | - | `1` | v2.0.0+ |
 
 &nbsp;
 

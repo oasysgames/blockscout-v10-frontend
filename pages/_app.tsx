@@ -37,6 +37,7 @@ const RewardsActivityTracker = dynamic(() => import('ui/rewards/RewardsActivityT
 import 'lib/setLocale';
 // import 'focus-visible/dist/focus-visible';
 import 'nextjs/global.css';
+import 'styles/output.css';
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;

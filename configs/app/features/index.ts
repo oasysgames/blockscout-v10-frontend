@@ -17,6 +17,7 @@ export { default as deFiDropdown } from './deFiDropdown';
 export { default as easterEggBadge } from './easterEggBadge';
 export { default as easterEggPuzzleBadge } from './easterEggPuzzleBadge';
 export { default as externalTxs } from './externalTxs';
+export { default as experiment } from './experiment';
 export { default as faultProofSystem } from './faultProofSystem';
 export { default as flashblocks } from './flashblocks';
 export { default as gasTracker } from './gasTracker';
