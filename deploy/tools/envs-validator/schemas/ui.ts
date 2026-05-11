@@ -342,3 +342,10 @@ export const viewsSchema = yup.object({
       .of(contractCodeIdeSchema),
     NEXT_PUBLIC_HAS_CONTRACT_AUDIT_REPORTS: yup.boolean(),
 });
+
+export const bridgeSchema = yup.object({
+  NEXT_PUBLIC_MENU_BRIDGE_VISIBLE: yup.boolean(),
+  NEXT_PUBLIC_L2_CHAIN_ID: yup.number().positive().integer(),
+  NEXT_PUBLIC_L1_BRIDGE_ADDRESS: yup.string(),
+  NEXT_PUBLIC_VERSE_VERSION: yup.number().positive().integer(),
+});

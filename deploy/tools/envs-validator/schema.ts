@@ -162,6 +162,7 @@ const schema = yup
   .concat(uiSchemas.footerSchema)
   .concat(uiSchemas.miscSchema)
   .concat(uiSchemas.viewsSchema)
+  .concat(uiSchemas.bridgeSchema)
   .concat(featuresSchemas.accountSchema)
   .concat(featuresSchemas.address3rdPartyWidgetsConfigSchema)
   .concat(featuresSchemas.adsSchema)
